@@ -1,3 +1,61 @@
+# 93.0.4577.83
+* dropped patch for FLoC (already disabled by upstream)
+* dropped patch for build with system sysroots
+* disable tab groups by default (needs restart)
+* added 'services/network/public/mojom' to ad blocker patch to avoid a build error
+
+# 92.0.4515.176
+* use upstream feature to prevent default search engine permissions grants
+* slightly improve error message for gateway attacks prevention error
+
+# 92.0.4515.134
+
+# 92.0.4515.125
+* replace patch for missing API keys warning
+* fix subresource filter not working (thanks to @uazo, fixes https://github.com/bromite/bromite/issues/1299)
+
+# 92.0.4515.103
+* disable User Agent client hints
+* fix builds with system sysroots
+* force text/x-suse-ymp to be downloaded
+
+# 91.0.4472.158
+* added x64 releases
+
+# 91.0.4472.146
+* removed flags for device motion/orientation (fixes https://github.com/bromite/bromite/issues/1204)
+* prevent crash on download on API level 21 (fixes https://github.com/bromite/bromite/issues/1184)
+* fix crash reporting garbled UI for small screens (thanks to @uazo, https://github.com/bromite/bromite/pull/1236)
+* add flag to enable/disable vibration API (fixes https://github.com/bromite/bromite/issues/1045)
+
+# 91.0.4472.143
+* add support for ISupportHelpAndFeedback
+* JIT-less toggle (fixes https://github.com/bromite/bromite/issues/1235)
+* enable crash reporting UI (thanks to @uazo, fixes https://github.com/bromite/bromite/issues/944)
+
+# 91.0.4472.102
+* fix opening new tabs from links in always-incognito mode (thanks to @uazo, fixes https://github.com/bromite/bromite/issues/1154)
+* allow saving pages in incognito mode (thanks to @uazo, fixes https://github.com/bromite/bromite/issues/1182)
+
+# 91.0.4472.97
+* add flag for omnibox autocomplete filtering (fixes https://github.com/bromite/bromite/issues/1152)
+* enable IntentBlockExternalFormRedirectsNoGesture by default
+* add flag to disable external intent requests
+* fix for tab collection temporary/non-exportable (thanks to @uazo, fixes https://github.com/bromite/bromite/issues/1138)
+
+# 91.0.4472.50
+* unexpire tab group flags `#enable-tab-groups` and `#enable-tab-groups-ui-improvements`
+* replace known good hostname used for DoH test (fixes https://github.com/bromite/bromite/issues/1148)
+* drop patch to disable preview fetching
+* drop patch to restore horizontal tab switcher
+
+# 90.0.4430.204
+* fix for custom tab intent tab crashes when in always incognito mode (thanks to @uazo, fixes https://github.com/bromite/bromite/issues/1116)
+
+# 90.0.4430.101
+* disable RTCGetCurrentBrowsingContextMedia by default
+* disable FLoC by default
+
 # 90.0.4430.92
 * restore horizontal tab switcher feature (fixes https://github.com/bromite/bromite/issues/1077)
 * fix a couple of bugs in proxy saving UI (thanks to @uazo, fixes https://github.com/bromite/bromite/issues/1072)

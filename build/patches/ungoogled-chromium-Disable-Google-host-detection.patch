@@ -9,12 +9,12 @@ Disables various detections of Google hosts and functionality specific to them
  .../common/page_load_metrics_util.cc          |  33 +--
  components/search_engines/template_url.cc     |   6 +-
  net/base/url_util.cc                          |  21 --
- 5 files changed, 9 insertions(+), 273 deletions(-)
+ 5 files changed, 8 insertions(+), 274 deletions(-)
 
 diff --git a/components/google/core/common/google_util.cc b/components/google/core/common/google_util.cc
 --- a/components/google/core/common/google_util.cc
 +++ b/components/google/core/common/google_util.cc
-@@ -29,129 +29,10 @@
+@@ -29,131 +29,8 @@
  
  namespace google_util {
  
@@ -105,6 +105,8 @@ diff --git a/components/google/core/common/google_util.cc b/components/google/co
 -      youtube_tlds(
 -          std::initializer_list<base::StringPiece>({YOUTUBE_TLD_LIST}));
 -  return IsValidHostName(canonical_host, "youtube", subdomain_permission,
+-                         *youtube_tlds) ||
+-      IsValidHostName(canonical_host, "youtubekids", subdomain_permission,
 -                         *youtube_tlds);
 -}
 -
@@ -127,15 +129,15 @@ diff --git a/components/google/core/common/google_util.cc b/components/google/co
 -
 -}  // namespace
 -
- // Global functions -----------------------------------------------------------
- 
+-// Global functions -----------------------------------------------------------
+-
  const char kGoogleHomepageURL[] = "https://www.google.com/";
  
 -bool HasGoogleSearchQueryParam(base::StringPiece str) {
 -  url::Component query(0, static_cast<int>(str.length())), key, value;
 -  while (url::ExtractQueryKeyValue(str.data(), &query, &key, &value)) {
 -    base::StringPiece key_str = str.substr(key.begin, key.len);
--    if (key_str == "q" || key_str == "as_q")
+-    if (key_str == "q" || key_str == "as_q" || key_str == "imgurl")
 -      return true;
 -  }
 -  return false;
@@ -144,11 +146,10 @@ diff --git a/components/google/core/common/google_util.cc b/components/google/co
  std::string GetGoogleLocale(const std::string& application_locale) {
    // Google does not recognize "nb" for Norwegian Bokmal; it uses "no".
    return (application_locale == "nb") ? "no" : application_locale;
-@@ -164,25 +45,7 @@ GURL AppendGoogleLocaleParam(const GURL& url,
- }
+@@ -167,24 +44,7 @@ GURL AppendGoogleLocaleParam(const GURL& url,
  
  std::string GetGoogleCountryCode(const GURL& google_homepage_url) {
--  base::StringPiece google_hostname = google_homepage_url.host_piece();
+   base::StringPiece google_hostname = google_homepage_url.host_piece();
 -  // TODO(igorcov): This needs a fix for case when the host has a trailing dot,
 -  // like "google.com./". https://crbug.com/720295.
 -  const size_t last_dot = google_hostname.find_last_of('.');
@@ -166,12 +167,12 @@ diff --git a/components/google/core/common/google_util.cc b/components/google/co
 -  // so use Spain instead.
 -  if (country_code == "cat")
 -    return "es";
--  return country_code.as_string();
+-  return std::string(country_code);
 +  return std::string();
  }
  
  GURL GetGoogleSearchURL(const GURL& google_homepage_url) {
-@@ -221,99 +84,30 @@ bool StartsWithCommandLineGoogleBaseURL(const GURL& url) {
+@@ -223,9 +83,7 @@ bool StartsWithCommandLineGoogleBaseURL(const GURL& url) {
  
  bool IsGoogleHostname(base::StringPiece host,
                        SubdomainPermission subdomain_permission) {
@@ -182,11 +183,7 @@ diff --git a/components/google/core/common/google_util.cc b/components/google/co
  }
  
  bool IsGoogleDomainUrl(const GURL& url,
-                        SubdomainPermission subdomain_permission,
-                        PortPermission port_permission) {
--  return IsValidURL(url, port_permission) &&
--         IsCanonicalHostGoogleHostname(url.host_piece(), subdomain_permission);
-+  return false;
+@@ -236,86 +94,20 @@ bool IsGoogleDomainUrl(const GURL& url,
  }
  
  bool IsGoogleHomePageUrl(const GURL& url) {
@@ -215,7 +212,7 @@ diff --git a/components/google/core/common/google_util.cc b/components/google/co
 -  // Make sure the path is a known search path.
 -  base::StringPiece path(url.path_piece());
 -  bool is_home_page_base = IsPathHomePageBase(path);
--  if (!is_home_page_base && (path != "/search"))
+-  if (!is_home_page_base && path != "/search" && path != "/imgres")
 -    return false;
 -
 -  // Check for query parameter in URL parameter and hash fragment, depending on
@@ -279,11 +276,11 @@ diff --git a/components/google/core/common/google_util.cc b/components/google/co
 diff --git a/components/page_load_metrics/browser/page_load_metrics_util.cc b/components/page_load_metrics/browser/page_load_metrics_util.cc
 --- a/components/page_load_metrics/browser/page_load_metrics_util.cc
 +++ b/components/page_load_metrics/browser/page_load_metrics_util.cc
-@@ -188,9 +188,7 @@ bool DidObserveLoadingBehaviorInAnyFrame(
+@@ -196,9 +196,7 @@ bool DidObserveLoadingBehaviorInAnyFrame(
  }
  
  bool IsGoogleSearchHostname(const GURL& url) {
--  base::Optional<std::string> result =
+-  absl::optional<std::string> result =
 -      page_load_metrics::GetGoogleHostnamePrefix(url);
 -  return result && result.value() == "www";
 +  return false;
@@ -293,10 +290,10 @@ diff --git a/components/page_load_metrics/browser/page_load_metrics_util.cc b/co
 diff --git a/components/page_load_metrics/common/page_load_metrics_util.cc b/components/page_load_metrics/common/page_load_metrics_util.cc
 --- a/components/page_load_metrics/common/page_load_metrics_util.cc
 +++ b/components/page_load_metrics/common/page_load_metrics_util.cc
-@@ -12,38 +12,7 @@
- namespace page_load_metrics {
+@@ -36,38 +36,7 @@ const char* kBufferTimerDelayParamName = "BufferTimerDelayMillis";
+ }  // namespace
  
- base::Optional<std::string> GetGoogleHostnamePrefix(const GURL& url) {
+ absl::optional<std::string> GetGoogleHostnamePrefix(const GURL& url) {
 -  const size_t registry_length =
 -      net::registry_controlled_domains::GetRegistryLength(
 -          url,
@@ -312,7 +309,7 @@ diff --git a/components/page_load_metrics/common/page_load_metrics_util.cc b/com
 -  const base::StringPiece hostname = url.host_piece();
 -  if (registry_length == 0 || registry_length == std::string::npos ||
 -      registry_length >= hostname.length()) {
--    return base::Optional<std::string>();
+-    return absl::optional<std::string>();
 -  }
 -
 -  // Removes the tld and the preceding dot.
@@ -324,19 +321,19 @@ diff --git a/components/page_load_metrics/common/page_load_metrics_util.cc b/com
 -
 -  if (!base::EndsWith(hostname_minus_registry, ".google",
 -                      base::CompareCase::INSENSITIVE_ASCII)) {
--    return base::Optional<std::string>();
+-    return absl::optional<std::string>();
 -  }
 -
 -  return std::string(hostname_minus_registry.substr(
 -      0, hostname_minus_registry.length() - strlen(".google")));
-+  return base::Optional<std::string>();
++  return std::string("");
  }
  
  bool IsGoogleHostname(const GURL& url) {
 diff --git a/components/search_engines/template_url.cc b/components/search_engines/template_url.cc
 --- a/components/search_engines/template_url.cc
 +++ b/components/search_engines/template_url.cc
-@@ -526,11 +526,7 @@ base::string16 TemplateURLRef::SearchTermToString16(
+@@ -526,11 +526,7 @@ std::u16string TemplateURLRef::SearchTermToString16(
  bool TemplateURLRef::HasGoogleBaseURLs(
      const SearchTermsData& search_terms_data) const {
    ParseIfNecessary(search_terms_data);
@@ -352,7 +349,7 @@ diff --git a/components/search_engines/template_url.cc b/components/search_engin
 diff --git a/net/base/url_util.cc b/net/base/url_util.cc
 --- a/net/base/url_util.cc
 +++ b/net/base/url_util.cc
-@@ -431,27 +431,6 @@ bool HasGoogleHost(const GURL& url) {
+@@ -442,27 +442,6 @@ bool HasGoogleHost(const GURL& url) {
  }
  
  bool IsGoogleHost(base::StringPiece host) {

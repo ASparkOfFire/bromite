@@ -12,7 +12,7 @@ Subject: Use 4 tile rows, never show logo
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ntp/NewTabPageLayout.java b/chrome/android/java/src/org/chromium/chrome/browser/ntp/NewTabPageLayout.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ntp/NewTabPageLayout.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ntp/NewTabPageLayout.java
-@@ -120,7 +120,7 @@ public class NewTabPageLayout extends LinearLayout implements TileGroup.Observer
+@@ -127,7 +127,7 @@ public class NewTabPageLayout extends LinearLayout implements TileGroup.Observer
       */
      private boolean mHasShownView;
  
@@ -21,7 +21,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ntp/NewTabPageL
      private boolean mSearchProviderIsGoogle;
      private boolean mShowingNonStandardLogo;
  
-@@ -254,7 +254,7 @@ public class NewTabPageLayout extends LinearLayout implements TileGroup.Observer
+@@ -252,7 +252,7 @@ public class NewTabPageLayout extends LinearLayout implements TileGroup.Observer
          mTileGroup = new TileGroup(tileRenderer, mManager, contextMenuManager, tileGroupDelegate,
                  /* observer = */ this, offlinePageBridge);
  
@@ -30,7 +30,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ntp/NewTabPageL
          if (searchProviderIsGoogle && QueryTileUtils.isQueryTilesEnabledOnNTP()) {
              maxRows = QueryTileSection.getMaxRowsForMostVisitedTiles(getContext());
          }
-@@ -574,7 +574,7 @@ public class NewTabPageLayout extends LinearLayout implements TileGroup.Observer
+@@ -562,7 +562,7 @@ public class NewTabPageLayout extends LinearLayout implements TileGroup.Observer
                  && mInitialized) {
              return;
          }
@@ -42,7 +42,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ntp/NewTabPageL
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/suggestions/mostvisited/MostVisitedSitesBridge.java b/chrome/android/java/src/org/chromium/chrome/browser/suggestions/mostvisited/MostVisitedSitesBridge.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/suggestions/mostvisited/MostVisitedSitesBridge.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/suggestions/mostvisited/MostVisitedSitesBridge.java
-@@ -25,7 +25,7 @@ public class MostVisitedSitesBridge implements MostVisitedSites {
+@@ -24,7 +24,7 @@ public class MostVisitedSitesBridge implements MostVisitedSites {
       * Maximum number of tiles that is explicitly supported. UMA relies on this value, so even if
       * the UI supports it, getting more can raise unexpected issues.
       */
@@ -66,7 +66,7 @@ diff --git a/chrome/browser/engagement/important_sites_util.cc b/chrome/browser/
 diff --git a/components/history/core/browser/top_sites_impl.h b/components/history/core/browser/top_sites_impl.h
 --- a/components/history/core/browser/top_sites_impl.h
 +++ b/components/history/core/browser/top_sites_impl.h
-@@ -48,7 +48,7 @@ class TopSitesImpl : public TopSites, public HistoryServiceObserver {
+@@ -47,7 +47,7 @@ class TopSitesImpl : public TopSites, public HistoryServiceObserver {
    using CanAddURLToHistoryFn = base::RepeatingCallback<bool(const GURL&)>;
  
    // How many top sites to store in the cache.

@@ -9,17 +9,17 @@ Subject: Remove blocklisted URLs upon bookmark creation
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -136,6 +136,8 @@ import org.chromium.chrome.browser.page_info.ChromePageInfoControllerDelegate;
- import org.chromium.chrome.browser.page_info.ChromePermissionParamsListBuilderDelegate;
- import org.chromium.chrome.browser.partnercustomizations.PartnerBrowserCustomizations;
- import org.chromium.chrome.browser.preferences.Pref;
+@@ -139,6 +139,8 @@ import org.chromium.chrome.browser.metrics.LaunchMetrics;
+ import org.chromium.chrome.browser.metrics.UmaSessionStats;
+ import org.chromium.chrome.browser.multiwindow.MultiWindowUtils;
+ import org.chromium.chrome.browser.ntp.NewTabPageUma;
 +import org.chromium.chrome.browser.suggestions.SuggestionsDependencyFactory;
 +import org.chromium.chrome.browser.suggestions.mostvisited.MostVisitedSites;
- import org.chromium.chrome.browser.printing.TabPrinter;
- import org.chromium.chrome.browser.profiles.Profile;
- import org.chromium.chrome.browser.settings.SettingsLauncherImpl;
-@@ -223,6 +225,8 @@ import org.chromium.url.GURL;
- import org.chromium.url.Origin;
+ import org.chromium.chrome.browser.offlinepages.OfflinePageUtils;
+ import org.chromium.chrome.browser.offlinepages.indicator.OfflineIndicatorController;
+ import org.chromium.chrome.browser.omaha.UpdateInfoBarController;
+@@ -239,6 +241,8 @@ import org.chromium.ui.widget.Toast;
+ import org.chromium.url.GURL;
  import org.chromium.webapk.lib.client.WebApkNavigationClient;
  
 +import org.chromium.url.GURL;
@@ -27,7 +27,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActiv
  import java.util.ArrayList;
  import java.util.List;
  import java.util.function.Consumer;
-@@ -275,6 +279,7 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
+@@ -287,6 +291,7 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
  
      private UmaSessionStats mUmaSessionStats;
      private ContextReporter mContextReporter;
@@ -35,8 +35,8 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActiv
  
      private boolean mPartnerBrowserRefreshNeeded;
  
-@@ -1320,6 +1325,11 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
-             mCompositorViewHolder = null;
+@@ -1452,6 +1457,11 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
+             mCompositorViewHolderSupplier.set(null);
          }
  
 +        if (mMostVisitedSites != null) {
@@ -47,7 +47,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActiv
          onDestroyInternal();
  
          if (mDidAddPolicyChangeListener) {
-@@ -1597,6 +1607,13 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
+@@ -1763,6 +1773,13 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
  
          // Defense in depth against the UI being erroneously enabled.
          BookmarkBridge bridge = mBookmarkBridgeSupplier.get();
