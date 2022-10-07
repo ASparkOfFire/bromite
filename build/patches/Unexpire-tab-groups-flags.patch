@@ -3,15 +3,18 @@ Date: Mon, 17 May 2021 22:32:36 +0200
 Subject: Unexpire tab groups flags
 
 Disable by default
+
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
- chrome/browser/flag-metadata.json                   | 4 ++--
- chrome/browser/flags/android/chrome_feature_list.cc | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ chrome/browser/flag-metadata.json                             | 4 ++--
+ chrome/browser/flags/android/chrome_feature_list.cc           | 4 ++--
+ .../org/chromium/chrome/browser/flags/CachedFeatureFlags.java | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.json
 --- a/chrome/browser/flag-metadata.json
 +++ b/chrome/browser/flag-metadata.json
-@@ -2641,7 +2641,7 @@
+@@ -2934,7 +2934,7 @@
    {
      "name": "enable-tab-groups",
      "owners": [ "memex-team@google.com" ],
@@ -20,7 +23,7 @@ diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.js
    },
    {
      "name": "enable-tab-groups-continuation",
-@@ -2651,7 +2651,7 @@
+@@ -2949,7 +2949,7 @@
    {
      "name": "enable-tab-groups-ui-improvements",
      "owners": [ "memex-team@google.com" ],
@@ -32,7 +35,7 @@ diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.js
 diff --git a/chrome/browser/flags/android/chrome_feature_list.cc b/chrome/browser/flags/android/chrome_feature_list.cc
 --- a/chrome/browser/flags/android/chrome_feature_list.cc
 +++ b/chrome/browser/flags/android/chrome_feature_list.cc
-@@ -698,13 +698,13 @@ const base::Feature kTabEngagementReportingAndroid{
+@@ -839,13 +839,13 @@ const base::Feature kTabEngagementReportingAndroid{
      "TabEngagementReportingAndroid", base::FEATURE_DISABLED_BY_DEFAULT};
  
  const base::Feature kTabGroupsAndroid{"TabGroupsAndroid",
@@ -46,8 +49,19 @@ diff --git a/chrome/browser/flags/android/chrome_feature_list.cc b/chrome/browse
 -    "TabGroupsUiImprovementsAndroid", base::FEATURE_ENABLED_BY_DEFAULT};
 +    "TabGroupsUiImprovementsAndroid", base::FEATURE_DISABLED_BY_DEFAULT};
  
- const base::Feature kTabGridLayoutAndroid{"TabGridLayoutAndroid",
-                                           base::FEATURE_ENABLED_BY_DEFAULT};
--- 
-2.17.1
-
+ const base::Feature kTabGroupsForTablets{"TabGroupsForTablets",
+                                          base::FEATURE_DISABLED_BY_DEFAULT};
+diff --git a/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/CachedFeatureFlags.java b/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/CachedFeatureFlags.java
+--- a/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/CachedFeatureFlags.java
++++ b/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/CachedFeatureFlags.java
+@@ -93,7 +93,7 @@ public class CachedFeatureFlags {
+                     .put(ChromeFeatureList.STORE_HOURS, false)
+                     .put(ChromeFeatureList.SWAP_PIXEL_FORMAT_TO_FIX_CONVERT_FROM_TRANSLUCENT, true)
+                     .put(ChromeFeatureList.TAB_GRID_LAYOUT_ANDROID, true)
+-                    .put(ChromeFeatureList.TAB_GROUPS_ANDROID, true)
++                    .put(ChromeFeatureList.TAB_GROUPS_ANDROID, false)
+                     .put(ChromeFeatureList.TAB_GROUPS_CONTINUATION_ANDROID, false)
+                     .put(ChromeFeatureList.TAB_GROUPS_FOR_TABLETS, false)
+                     .put(ChromeFeatureList.TAB_STRIP_IMPROVEMENTS, false)
+--
+2.25.1

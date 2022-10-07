@@ -2,6 +2,7 @@ From: csagan5 <32685696+csagan5@users.noreply.github.com>
 Date: Wed, 27 Jun 2018 01:32:28 +0200
 Subject: Remove help menu item
 
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
  chrome/android/java/res/menu/main_menu.xml             |  3 ---
  .../org/chromium/chrome/browser/KeyboardShortcuts.java |  3 ---
@@ -13,7 +14,7 @@ Subject: Remove help menu item
 diff --git a/chrome/android/java/res/menu/main_menu.xml b/chrome/android/java/res/menu/main_menu.xml
 --- a/chrome/android/java/res/menu/main_menu.xml
 +++ b/chrome/android/java/res/menu/main_menu.xml
-@@ -113,9 +113,6 @@
+@@ -148,9 +148,6 @@
          <item android:id="@+id/preferences_id"
              android:title="@string/menu_settings"
              android:icon="@drawable/settings_cog" />
@@ -26,7 +27,7 @@ diff --git a/chrome/android/java/res/menu/main_menu.xml b/chrome/android/java/re
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/KeyboardShortcuts.java b/chrome/android/java/src/org/chromium/chrome/browser/KeyboardShortcuts.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/KeyboardShortcuts.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/KeyboardShortcuts.java
-@@ -364,9 +364,6 @@ public class KeyboardShortcuts {
+@@ -363,9 +363,6 @@ public class KeyboardShortcuts {
                  case KeyEvent.KEYCODE_BUTTON_START:
                      if (currentTab != null && currentTab.canGoForward()) currentTab.goForward();
                      return true;
@@ -39,7 +40,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/KeyboardShortcu
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -2330,16 +2330,6 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
+@@ -2324,16 +2324,6 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
  
          final Tab currentTab = getActivityTab();
  
@@ -59,12 +60,12 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActiv
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/BaseCustomTabActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/customtabs/BaseCustomTabActivity.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/BaseCustomTabActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/customtabs/BaseCustomTabActivity.java
-@@ -516,7 +516,7 @@ public abstract class BaseCustomTabActivity extends ChromeActivity<BaseCustomTab
-     @Override
+@@ -538,7 +538,7 @@ public abstract class BaseCustomTabActivity extends ChromeActivity<BaseCustomTab
      public boolean onMenuOrKeyboardAction(int id, boolean fromMenu) {
          // Disable creating new tabs, bookmark, history, print, help, focus_url, etc.
--        if (id == R.id.focus_url_bar || id == R.id.all_bookmarks_menu_id || id == R.id.help_id
-+        if (id == R.id.focus_url_bar || id == R.id.all_bookmarks_menu_id
+         if (id == R.id.focus_url_bar || id == R.id.all_bookmarks_menu_id
+-                || id == R.id.add_to_reading_list_menu_id || id == R.id.help_id
++                || id == R.id.add_to_reading_list_menu_id
                  || id == R.id.recent_tabs_menu_id || id == R.id.new_incognito_tab_menu_id
                  || id == R.id.new_tab_menu_id || id == R.id.open_history_menu_id) {
              return true;
@@ -87,6 +88,5 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/directactions/M
          availableItemIds.add(R.id.new_tab_menu_id);
          availableItemIds.add(R.id.preferences_id);
  
--- 
-2.17.1
-
+--
+2.25.1

@@ -3,6 +3,8 @@ Date: Sun, 23 Aug 2020 14:32:55 -0500
 Subject: Disable the DIAL repeating discovery
 
 This causes unnecessary SSDP network spam
+
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
  chrome/browser/media/router/discovery/dial/dial_registry.cc | 6 ------
  1 file changed, 6 deletions(-)
@@ -10,26 +12,25 @@ This causes unnecessary SSDP network spam
 diff --git a/chrome/browser/media/router/discovery/dial/dial_registry.cc b/chrome/browser/media/router/discovery/dial/dial_registry.cc
 --- a/chrome/browser/media/router/discovery/dial/dial_registry.cc
 +++ b/chrome/browser/media/router/discovery/dial/dial_registry.cc
-@@ -191,10 +191,6 @@ void DialRegistry::StartPeriodicDiscovery() {
+@@ -154,10 +154,6 @@ void DialRegistry::StartPeriodicDiscovery() {
+     return;
  
    dial_ = CreateDialService();
-   dial_->AddObserver(this);
 -  DoDiscovery();
 -  repeating_timer_ = std::make_unique<base::RepeatingTimer>();
 -  repeating_timer_->Start(FROM_HERE, refresh_interval_delta_, this,
 -                          &DialRegistry::DoDiscovery);
- }
- 
- void DialRegistry::DoDiscovery() {
-@@ -208,8 +204,6 @@ void DialRegistry::StopPeriodicDiscovery() {
+   // Always send the current device list with the next discovery request.  This
+   // may not be necessary, but is done to match previous behavior.
+   ++registry_generation_;
+@@ -174,8 +170,6 @@ void DialRegistry::StopPeriodicDiscovery() {
    if (!dial_)
      return;
  
 -  repeating_timer_->Stop();
 -  repeating_timer_.reset();
-   dial_->RemoveObserver(this);
    ClearDialService();
  }
--- 
-2.17.1
-
+ 
+--
+2.25.1

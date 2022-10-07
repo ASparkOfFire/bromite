@@ -2,6 +2,7 @@ From: csagan5 <32685696+csagan5@users.noreply.github.com>
 Date: Mon, 13 Jul 2020 00:37:06 +0200
 Subject: Add menu item to view source
 
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
  chrome/android/java/res/menu/custom_tabs_menu.xml  |  3 +++
  chrome/android/java/res/menu/main_menu.xml         |  3 +++
@@ -28,7 +29,7 @@ diff --git a/chrome/android/java/res/menu/custom_tabs_menu.xml b/chrome/android/
 diff --git a/chrome/android/java/res/menu/main_menu.xml b/chrome/android/java/res/menu/main_menu.xml
 --- a/chrome/android/java/res/menu/main_menu.xml
 +++ b/chrome/android/java/res/menu/main_menu.xml
-@@ -85,6 +85,9 @@
+@@ -106,6 +106,9 @@
          <item android:id="@+id/add_to_homescreen_id"
              android:title="@string/menu_add_to_homescreen"
              android:icon="@drawable/ic_add_to_home_screen" />
@@ -41,7 +42,7 @@ diff --git a/chrome/android/java/res/menu/main_menu.xml b/chrome/android/java/re
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
-@@ -1988,6 +1988,8 @@ public class ChromeTabbedActivity extends ChromeActivity<ChromeActivityComponent
+@@ -2219,6 +2219,8 @@ public class ChromeTabbedActivity extends ChromeActivity<ChromeActivityComponent
                  NewTabPageUma.recordAction(NewTabPageUma.ACTION_OPENED_DOWNLOADS_MANAGER);
              }
              RecordUserAction.record("MobileMenuDownloadManager");
@@ -49,11 +50,11 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedAct
 +            currentTab.getWebContents().getNavigationController().loadUrl(new LoadUrlParams("view-source:"+currentTab.getUrl().getSpec()));
          } else if (id == R.id.open_recently_closed_tab) {
              TabModel currentModel = mTabModelSelector.getCurrentModel();
-             if (!currentModel.isIncognito()) currentModel.openMostRecentlyClosedTab();
+             if (!currentModel.isIncognito()) currentModel.openMostRecentlyClosedEntry();
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -2443,6 +2443,11 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
+@@ -2417,6 +2417,11 @@ public abstract class ChromeActivity<C extends ChromeActivityComponent>
              return true;
          }
  
@@ -68,16 +69,16 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActiv
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/appmenu/AppMenuPropertiesDelegateImpl.java b/chrome/android/java/src/org/chromium/chrome/browser/app/appmenu/AppMenuPropertiesDelegateImpl.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/appmenu/AppMenuPropertiesDelegateImpl.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/appmenu/AppMenuPropertiesDelegateImpl.java
-@@ -348,6 +348,7 @@ public class AppMenuPropertiesDelegateImpl implements AppMenuPropertiesDelegate
+@@ -527,6 +527,7 @@ public class AppMenuPropertiesDelegateImpl implements AppMenuPropertiesDelegate
                          isChromeScheme, isFileScheme, isContentScheme, isIncognito, url));
  
-         updateRequestDesktopSiteMenuItem(menu, currentTab, true /* can show */);
+         updateRequestDesktopSiteMenuItem(menu, currentTab, true /* can show */, isChromeScheme);
 +        updateViewSourceMenuItem(menu, currentTab);
  
-         // Only display reader mode settings menu option if the current page is in reader mode.
-         menu.findItem(R.id.reader_mode_prefs_id).setVisible(shouldShowReaderModePrefs(currentTab));
-@@ -787,6 +788,19 @@ public class AppMenuPropertiesDelegateImpl implements AppMenuPropertiesDelegate
-         }
+         updateAutoDarkMenuItem(menu, currentTab, isChromeScheme);
+ 
+@@ -1157,6 +1158,19 @@ public class AppMenuPropertiesDelegateImpl implements AppMenuPropertiesDelegate
+             stopPriceTrackingMenuItem.setVisible(false);
      }
  
 +    /**
@@ -99,10 +100,10 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/appmenu/App
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabAppMenuPropertiesDelegate.java b/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabAppMenuPropertiesDelegate.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabAppMenuPropertiesDelegate.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabAppMenuPropertiesDelegate.java
-@@ -214,6 +214,7 @@ public class CustomTabAppMenuPropertiesDelegate extends AppMenuPropertiesDelegat
-             }
+@@ -220,6 +220,7 @@ public class CustomTabAppMenuPropertiesDelegate extends AppMenuPropertiesDelegat
  
-             updateRequestDesktopSiteMenuItem(menu, currentTab, requestDesktopSiteVisible);
+             updateRequestDesktopSiteMenuItem(
+                     menu, currentTab, requestDesktopSiteVisible, isChromeScheme);
 +            updateViewSourceMenuItem(menu, currentTab);
              prepareAddToHomescreenMenuItem(menu, currentTab, addToHomeScreenVisible);
          }
@@ -110,17 +111,16 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/Cust
 diff --git a/chrome/browser/ui/android/strings/android_chrome_strings.grd b/chrome/browser/ui/android/strings/android_chrome_strings.grd
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -299,6 +299,10 @@ CHAR_LIMIT guidelines:
-         Sign-in verifications
+@@ -312,6 +312,10 @@ CHAR_LIMIT guidelines:
+         USB
        </message>
  
 +      <message name="IDS_VIEW_SOURCE" desc="Title for the menu command to view the source of the current page. [CHAR-LIMIT=40]">
 +        View source
 +      </message>
 +
-       <message name="IDS_UNSUPPORTED" desc="Message displayed to the user when an attempted action is not supported.">
-         Unsupported
-       </message>
--- 
-2.17.1
-
+       <!-- Sign-in, sync and personalization preferences -->
+       <message name="IDS_PREFS_SECTION_ACCOUNT_AND_GOOGLE_SERVICES" desc="Title for the group of account-related entries and google services in Settings. [CHAR_LIMIT=32]">
+         You and Google
+--
+2.25.1

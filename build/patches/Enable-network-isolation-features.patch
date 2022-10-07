@@ -6,6 +6,8 @@ Enable SplitCacheByNetworkIsolationKey, kSplitHostCacheByNetworkIsolationKey,
 kPartitionConnectionsByNetworkIsolationKey, kPartitionHttpServerPropertiesByNetworkIsolationKey,
 kPartitionSSLSessionsByNetworkIsolationKey, PartitionExpectCTStateByNetworkIsolationKey,
 PartitionNelAndReportingByNetworkIsolationKey
+
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
  net/base/features.cc | 14 +++++++-------
  1 file changed, 7 insertions(+), 7 deletions(-)
@@ -13,8 +15,8 @@ PartitionNelAndReportingByNetworkIsolationKey
 diff --git a/net/base/features.cc b/net/base/features.cc
 --- a/net/base/features.cc
 +++ b/net/base/features.cc
-@@ -92,30 +92,30 @@ const base::Feature kNetworkQualityEstimator{"NetworkQualityEstimator",
-                                              base::FEATURE_DISABLED_BY_DEFAULT};
+@@ -121,14 +121,14 @@ const base::Feature kSplitCacheByIncludeCredentials{
+     "SplitCacheByIncludeCredentials", base::FEATURE_DISABLED_BY_DEFAULT};
  
  const base::Feature kSplitCacheByNetworkIsolationKey{
 -    "SplitCacheByNetworkIsolationKey", base::FEATURE_DISABLED_BY_DEFAULT};
@@ -28,6 +30,10 @@ diff --git a/net/base/features.cc b/net/base/features.cc
      "PartitionConnectionsByNetworkIsolationKey",
 -    base::FEATURE_DISABLED_BY_DEFAULT};
 +    base::FEATURE_ENABLED_BY_DEFAULT};
+ 
+ const base::Feature kForceIsolationInfoFrameOriginToTopLevelFrame{
+     "ForceIsolationInfoFrameOriginToTopLevelFrame",
+@@ -136,19 +136,19 @@ const base::Feature kForceIsolationInfoFrameOriginToTopLevelFrame{
  
  const base::Feature kPartitionHttpServerPropertiesByNetworkIsolationKey{
      "PartitionHttpServerPropertiesByNetworkIsolationKey",
@@ -51,6 +57,5 @@ diff --git a/net/base/features.cc b/net/base/features.cc
  
  const base::Feature kExpectCTPruning{"ExpectCTPruning",
                                       base::FEATURE_ENABLED_BY_DEFAULT};
--- 
-2.17.1
-
+--
+2.25.1

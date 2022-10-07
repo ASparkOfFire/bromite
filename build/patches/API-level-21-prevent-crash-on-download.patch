@@ -6,14 +6,24 @@ On Lollipop 5.0.x it is not possible to use the system persistent bundle.
 This patch ignores boolean settings for them and prevents the crash.
 
 See also: https://github.com/bromite/bromite/issues/1184
+
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
- .../internal/BundleToPersistableBundleConverter.java | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ .../BundleToPersistableBundleConverter.java         | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/components/background_task_scheduler/internal/android/java/src/org/chromium/components/background_task_scheduler/internal/BundleToPersistableBundleConverter.java b/components/background_task_scheduler/internal/android/java/src/org/chromium/components/background_task_scheduler/internal/BundleToPersistableBundleConverter.java
 --- a/components/background_task_scheduler/internal/android/java/src/org/chromium/components/background_task_scheduler/internal/BundleToPersistableBundleConverter.java
 +++ b/components/background_task_scheduler/internal/android/java/src/org/chromium/components/background_task_scheduler/internal/BundleToPersistableBundleConverter.java
-@@ -85,9 +85,17 @@ class BundleToPersistableBundleConverter {
+@@ -4,6 +4,7 @@
+ 
+ package org.chromium.components.background_task_scheduler.internal;
+ 
++import android.os.Build;
+ import android.os.Bundle;
+ import android.os.PersistableBundle;
+ 
+@@ -82,9 +83,17 @@ class BundleToPersistableBundleConverter {
              if (obj == null) {
                  persistableBundle.putString(key, null);
              } else if (obj instanceof Boolean) {
@@ -33,6 +43,5 @@ diff --git a/components/background_task_scheduler/internal/android/java/src/org/
              } else if (obj instanceof Double) {
                  persistableBundle.putDouble(key, (Double) obj);
              } else if (obj instanceof double[]) {
--- 
-2.17.1
-
+--
+2.25.1

@@ -3,6 +3,8 @@ Date: Sat, 23 Jan 2021 17:47:21 +0100
 Subject: Revert "flags: remove num-raster-threads"
 
 This reverts commit 2a51528a1737e9038f7f96f29403032a6a845a25.
+
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
  chrome/browser/about_flags.cc       | 12 ++++++++++++
  chrome/browser/flag-metadata.json   |  5 +++++
@@ -13,38 +15,38 @@ This reverts commit 2a51528a1737e9038f7f96f29403032a6a845a25.
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -305,6 +305,15 @@ const FeatureEntry::Choice kOverlayStrategiesChoices[] = {
+@@ -350,6 +350,15 @@ const FeatureEntry::Choice kOverlayStrategiesChoices[] = {
       "single-fullscreen,single-on-top,underlay"},
  };
  
 +const FeatureEntry::Choice kNumRasterThreadsChoices[] = {
 +    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
-+    {flag_descriptions::kNumRasterThreadsOne, switches::kNumRasterThreads, "1"},
-+    {flag_descriptions::kNumRasterThreadsTwo, switches::kNumRasterThreads, "2"},
-+    {flag_descriptions::kNumRasterThreadsThree, switches::kNumRasterThreads,
++    {flag_descriptions::kNumRasterThreadsOne, blink::switches::kNumRasterThreads, "1"},
++    {flag_descriptions::kNumRasterThreadsTwo, blink::switches::kNumRasterThreads, "2"},
++    {flag_descriptions::kNumRasterThreadsThree, blink::switches::kNumRasterThreads,
 +     "3"},
-+    {flag_descriptions::kNumRasterThreadsFour, switches::kNumRasterThreads,
++    {flag_descriptions::kNumRasterThreadsFour, blink::switches::kNumRasterThreads,
 +     "4"}};
 +
  const FeatureEntry::Choice kTouchTextSelectionStrategyChoices[] = {
      {flags_ui::kGenericExperimentChoiceDefault, "", ""},
      {flag_descriptions::kTouchSelectionStrategyCharacter,
-@@ -3586,6 +3595,9 @@ const FeatureEntry kFeatureEntries[] = {
-          feature_engagement::kIPHDemoMode,
-          feature_engagement::kIPHDemoModeChoiceVariations,
-          "IPH_DemoMode")},
+@@ -4288,6 +4297,9 @@ const FeatureEntry kFeatureEntries[] = {
+      FEATURE_VALUE_TYPE(mojo::core::kMojoLinuxChannelSharedMem)},
+ #endif
+ #if BUILDFLAG(IS_ANDROID)
 +    {"num-raster-threads", flag_descriptions::kNumRasterThreadsName,
 +     flag_descriptions::kNumRasterThreadsDescription, kOsAll,
 +     MULTI_VALUE_TYPE(kNumRasterThreadsChoices)},
-     {"disable-threaded-scrolling", flag_descriptions::kThreadedScrollingName,
-      flag_descriptions::kThreadedScrollingDescription, kOsAll,
-      SINGLE_DISABLE_VALUE_TYPE(blink::switches::kDisableThreadedScrolling)},
+     {"enable-site-isolation-for-password-sites",
+      flag_descriptions::kSiteIsolationForPasswordSitesName,
+      flag_descriptions::kSiteIsolationForPasswordSitesDescription, kOsAndroid,
 diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.json
 --- a/chrome/browser/flag-metadata.json
 +++ b/chrome/browser/flag-metadata.json
-@@ -3830,6 +3830,11 @@
-     "owners": [ "sczs", "thegreenfrog", "bling-flags@google.com" ],
-     "expiry_milestone": 83
+@@ -4480,6 +4480,11 @@
+     "owners": [ "aaronhk", "fserb", "juanmihd", "yiyix" ],
+     "expiry_milestone": 100
    },
 +  {
 +    "name": "num-raster-threads",
@@ -52,14 +54,14 @@ diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.js
 +    "expiry_milestone": -1
 +  },
    {
-     "name": "messages-translate-infobar",
-     "owners": [ "thegreenfrog", "sczs", "bling-flags@google.com" ],
+     "name": "new-content-suggestions-feed",
+     "owners": [ "adamta@google.com", "sczs", "gogerald", "bling-flags@google.com" ],
 diff --git a/chrome/browser/flag_descriptions.cc b/chrome/browser/flag_descriptions.cc
 --- a/chrome/browser/flag_descriptions.cc
 +++ b/chrome/browser/flag_descriptions.cc
-@@ -1738,6 +1738,14 @@ const char kOmniboxActiveSearchEnginesDescription[] =
-     "Enables a 'Your Search Engines' section on "
-     "chrome://settings/searchEngines.";
+@@ -1867,6 +1867,14 @@ const char kOmitCorsClientCertDescription[] =
+     "credential mode disallows. Without this flag enabled, Chrome will always "
+     "try sending client certificates regardless of the credential mode.";
  
 +const char kNumRasterThreadsName[] = "Number of raster threads";
 +const char kNumRasterThreadsDescription[] =
@@ -75,9 +77,9 @@ diff --git a/chrome/browser/flag_descriptions.cc b/chrome/browser/flag_descripti
 diff --git a/chrome/browser/flag_descriptions.h b/chrome/browser/flag_descriptions.h
 --- a/chrome/browser/flag_descriptions.h
 +++ b/chrome/browser/flag_descriptions.h
-@@ -1008,6 +1008,13 @@ extern const char kNotificationsSystemFlagDescription[];
- extern const char kOmniboxActiveSearchEnginesName[];
- extern const char kOmniboxActiveSearchEnginesDescription[];
+@@ -1063,6 +1063,13 @@ extern const char kOriginAgentClusterDefaultDescription[];
+ extern const char kOmitCorsClientCertName[];
+ extern const char kOmitCorsClientCertDescription[];
  
 +extern const char kNumRasterThreadsName[];
 +extern const char kNumRasterThreadsDescription[];
@@ -89,6 +91,5 @@ diff --git a/chrome/browser/flag_descriptions.h b/chrome/browser/flag_descriptio
  extern const char kOmniboxAdaptiveSuggestionsCountName[];
  extern const char kOmniboxAdaptiveSuggestionsCountDescription[];
  
--- 
-2.17.1
-
+--
+2.25.1

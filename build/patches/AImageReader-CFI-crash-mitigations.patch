@@ -17,10 +17,12 @@ See discussions at:
 * https://github.com/bromite/bromite/issues/445
 * https://github.com/bromite/bromite/issues/814
 * https://github.com/bromite/bromite/issues/1005
+
+License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
  base/android/android_image_reader_compat.cc |  8 +++++++-
  base/android/android_image_reader_compat.h  |  4 ++++
- chrome/browser/flag-metadata.json           |  2 +-
+ chrome/browser/flag-metadata.json           |  6 +++---
  gpu/config/gpu_driver_bug_list.json         | 16 ++++++++++++++++
  gpu/config/gpu_finch_features.cc            |  5 +++++
  gpu/config/gpu_finch_features.h             |  1 +
@@ -30,7 +32,7 @@ See discussions at:
  gpu/ipc/service/stream_texture_android.cc   | 11 ++++++++++-
  media/base/media_switches.cc                |  4 ++++
  media/base/media_switches.h                 |  1 +
- 12 files changed, 63 insertions(+), 3 deletions(-)
+ 12 files changed, 65 insertions(+), 5 deletions(-)
 
 diff --git a/base/android/android_image_reader_compat.cc b/base/android/android_image_reader_compat.cc
 --- a/base/android/android_image_reader_compat.cc
@@ -61,9 +63,9 @@ diff --git a/base/android/android_image_reader_compat.cc b/base/android/android_
 diff --git a/base/android/android_image_reader_compat.h b/base/android/android_image_reader_compat.h
 --- a/base/android/android_image_reader_compat.h
 +++ b/base/android/android_image_reader_compat.h
-@@ -22,6 +22,9 @@ class BASE_EXPORT AndroidImageReader {
-   // Thread safe GetInstance.
-   static AndroidImageReader& GetInstance();
+@@ -24,6 +24,9 @@ class BASE_EXPORT AndroidImageReader {
+   AndroidImageReader(const AndroidImageReader&) = delete;
+   AndroidImageReader& operator=(const AndroidImageReader&) = delete;
  
 +  // Disable image reader support.
 +  static void DisableSupport();
@@ -71,7 +73,7 @@ diff --git a/base/android/android_image_reader_compat.h b/base/android/android_i
    // Check if the image reader usage is supported. This function returns TRUE
    // if android version is >=OREO, image reader support is not disabled and all
    // the required functions are loaded.
-@@ -59,6 +62,7 @@ class BASE_EXPORT AndroidImageReader {
+@@ -61,6 +64,7 @@ class BASE_EXPORT AndroidImageReader {
    jobject ANativeWindow_toSurface(JNIEnv* env, ANativeWindow* window);
  
   private:
@@ -82,11 +84,15 @@ diff --git a/base/android/android_image_reader_compat.h b/base/android/android_i
 diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.json
 --- a/chrome/browser/flag-metadata.json
 +++ b/chrome/browser/flag-metadata.json
-@@ -2039,7 +2039,7 @@
+@@ -2392,9 +2392,9 @@
+     "expiry_milestone": 106
+   },
    {
-     "name": "enable-image-reader",
-     "owners": [ "vikassoni", "liberato" ],
--    "expiry_milestone": 95
+-    "name": "enable-image-reader",
+-    "owners": [ "vikassoni", "liberato" ],
+-    "expiry_milestone": 115
++    "name": "enable-image-reader",          // Bromite: do not expire
++    "owners": [ "vikassoni", "liberato" ],  // flag
 +    "expiry_milestone": -1
    },
    {
@@ -94,7 +100,7 @@ diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.js
 diff --git a/gpu/config/gpu_driver_bug_list.json b/gpu/config/gpu_driver_bug_list.json
 --- a/gpu/config/gpu_driver_bug_list.json
 +++ b/gpu/config/gpu_driver_bug_list.json
-@@ -3191,6 +3191,22 @@
+@@ -3199,6 +3199,22 @@
          "dont_delete_source_texture_for_egl_image"
        ]
      },
@@ -120,34 +126,34 @@ diff --git a/gpu/config/gpu_driver_bug_list.json b/gpu/config/gpu_driver_bug_lis
 diff --git a/gpu/config/gpu_finch_features.cc b/gpu/config/gpu_finch_features.cc
 --- a/gpu/config/gpu_finch_features.cc
 +++ b/gpu/config/gpu_finch_features.cc
-@@ -51,6 +51,11 @@ bool IsDeviceBlocked(const char* field, const std::string& block_list) {
- }  // namespace
+@@ -63,6 +63,11 @@ const base::Feature kUseGles2ForOopR {
+ #endif
+ };
  
- #if defined(OS_ANDROID)
 +
 +// Use android AImageReader when playing videos with MediaPlayer.
 +const base::Feature kAImageReaderMediaPlayer{"AImageReaderMediaPlayer",
 +                                  base::FEATURE_ENABLED_BY_DEFAULT};
 +
- // Used to limit GL version to 2.0 for skia raster on Android.
- const base::Feature kUseGles2ForOopR{"UseGles2ForOopR",
-                                      base::FEATURE_DISABLED_BY_DEFAULT};
+ #if BUILDFLAG(IS_ANDROID)
+ // Use android SurfaceControl API for managing display compositor's buffer queue
+ // and using overlays on Android. Also used by webview to disable surface
 diff --git a/gpu/config/gpu_finch_features.h b/gpu/config/gpu_finch_features.h
 --- a/gpu/config/gpu_finch_features.h
 +++ b/gpu/config/gpu_finch_features.h
 @@ -17,6 +17,7 @@ namespace features {
- // All features in alphabetical order. The features should be documented
- // alongside the definition of their values in the .cc file.
- #if defined(OS_ANDROID)
-+GPU_EXPORT extern const base::Feature kAImageReaderMediaPlayer;
  GPU_EXPORT extern const base::Feature kUseGles2ForOopR;
+ 
+ // All features in alphabetical order. The features should be documented
++GPU_EXPORT extern const base::Feature kAImageReaderMediaPlayer;
+ // alongside the definition of their values in the .cc file.
+ #if BUILDFLAG(IS_ANDROID)
  GPU_EXPORT extern const base::Feature kAndroidSurfaceControl;
- GPU_EXPORT extern const base::Feature kWebViewSurfaceControl;
 diff --git a/gpu/config/gpu_util.cc b/gpu/config/gpu_util.cc
 --- a/gpu/config/gpu_util.cc
 +++ b/gpu/config/gpu_util.cc
-@@ -114,6 +114,9 @@ GpuFeatureStatus GetAndroidSurfaceControlFeatureStatus(
- #if !defined(OS_ANDROID)
+@@ -122,6 +122,9 @@ GpuFeatureStatus GetAndroidSurfaceControlFeatureStatus(
+ #if !BUILDFLAG(IS_ANDROID)
    return kGpuFeatureStatusDisabled;
  #else
 +  if (blocklisted_features.count(GPU_FEATURE_TYPE_ANDROID_SURFACE_CONTROL))
@@ -156,8 +162,8 @@ diff --git a/gpu/config/gpu_util.cc b/gpu/config/gpu_util.cc
    if (!gpu_preferences.enable_android_surface_control)
      return kGpuFeatureStatusDisabled;
  
-@@ -319,6 +322,11 @@ void AdjustGpuFeatureStatusToWorkarounds(GpuFeatureInfo* gpu_feature_info) {
-     gpu_feature_info->status_values[GPU_FEATURE_TYPE_ACCELERATED_WEBGL2] =
+@@ -345,6 +348,11 @@ void AdjustGpuFeatureStatusToWorkarounds(GpuFeatureInfo* gpu_feature_info) {
+     gpu_feature_info->status_values[GPU_FEATURE_TYPE_CANVAS_OOP_RASTERIZATION] =
          kGpuFeatureStatusBlocklisted;
    }
 +
@@ -171,20 +177,20 @@ diff --git a/gpu/config/gpu_util.cc b/gpu/config/gpu_util.cc
 diff --git a/gpu/config/gpu_workaround_list.txt b/gpu/config/gpu_workaround_list.txt
 --- a/gpu/config/gpu_workaround_list.txt
 +++ b/gpu/config/gpu_workaround_list.txt
-@@ -13,6 +13,7 @@ decode_encode_srgb_for_generatemipmap
+@@ -15,6 +15,7 @@ decode_encode_srgb_for_generatemipmap
  depth_stencil_renderbuffer_resize_emulation
  disable_2d_canvas_auto_flush
  disable_accelerated_av1_decode
 +disable_aimagereader
- disable_accelerated_av1_decode_d3d11
  disable_accelerated_h264_encode
+ disable_accelerated_hevc_decode
  disable_accelerated_vp8_decode
 diff --git a/gpu/ipc/service/gpu_init.cc b/gpu/ipc/service/gpu_init.cc
 --- a/gpu/ipc/service/gpu_init.cc
 +++ b/gpu/ipc/service/gpu_init.cc
-@@ -503,6 +503,11 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
-     }
+@@ -589,6 +589,11 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
    }
+ #endif  // BUILDFLAG(IS_WIN)
  
 +  // Disable AImageReader if the workaround is enabled.
 +  if (gpu_feature_info_.IsWorkaroundEnabled(DISABLE_AIMAGEREADER)) {
@@ -205,7 +211,7 @@ diff --git a/gpu/ipc/service/stream_texture_android.cc b/gpu/ipc/service/stream_
  #include "base/android/scoped_hardware_buffer_fence_sync.h"
  #include "base/bind.h"
  #include "base/feature_list.h"
-@@ -50,7 +51,15 @@ std::unique_ptr<ui::ScopedMakeCurrent> MakeCurrent(
+@@ -51,7 +52,15 @@ std::unique_ptr<ui::ScopedMakeCurrent> MakeCurrent(
  }
  
  TextureOwner::Mode GetTextureOwnerMode() {
@@ -225,7 +231,7 @@ diff --git a/gpu/ipc/service/stream_texture_android.cc b/gpu/ipc/service/stream_
 diff --git a/media/base/media_switches.cc b/media/base/media_switches.cc
 --- a/media/base/media_switches.cc
 +++ b/media/base/media_switches.cc
-@@ -635,6 +635,10 @@ const base::Feature kMediaDrmPreprovisioning{"MediaDrmPreprovisioning",
+@@ -756,6 +756,10 @@ const base::Feature kMediaDrmPreprovisioning{"MediaDrmPreprovisioning",
  // Note: Has no effect if kMediaDrmPreprovisioning feature is disabled.
  const base::Feature kMediaDrmPreprovisioningAtStartup{
      "MediaDrmPreprovisioningAtStartup", base::FEATURE_ENABLED_BY_DEFAULT};
@@ -239,7 +245,7 @@ diff --git a/media/base/media_switches.cc b/media/base/media_switches.cc
 diff --git a/media/base/media_switches.h b/media/base/media_switches.h
 --- a/media/base/media_switches.h
 +++ b/media/base/media_switches.h
-@@ -208,6 +208,7 @@ MEDIA_EXPORT extern const base::Feature kForceHardwareAudioDecoders;
+@@ -233,6 +233,7 @@ MEDIA_EXPORT extern const base::Feature kForceHardwareAudioDecoders;
  MEDIA_EXPORT extern const base::Feature kAllowNonSecureOverlays;
  MEDIA_EXPORT extern const base::Feature kMediaControlsExpandGesture;
  MEDIA_EXPORT extern const base::Feature kMediaDrmPersistentLicense;
@@ -247,6 +253,5 @@ diff --git a/media/base/media_switches.h b/media/base/media_switches.h
  MEDIA_EXPORT extern const base::Feature kMediaDrmPreprovisioning;
  MEDIA_EXPORT extern const base::Feature kMediaDrmPreprovisioningAtStartup;
  MEDIA_EXPORT extern const base::Feature kCanPlayHls;
--- 
-2.17.1
-
+--
+2.25.1
